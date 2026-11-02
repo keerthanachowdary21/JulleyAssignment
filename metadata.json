@@ -1,0 +1,6 @@
+{
+  "name": "TenantFlow — Multi-Tenant Real-Time Kanban",
+  "description": "Enterprise multi-organization, multi-tenant collaborative Kanban workspace with strict tenant data isolation, RBAC, real-time Socket.IO sync, optimistic locking conflict resolution, Agentic AI insights, and complete architecture documentation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

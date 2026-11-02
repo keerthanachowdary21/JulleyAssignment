@@ -1,0 +1,2494 @@
+# **JulleyOnline - FDE Intern - Assignment Prepartation Ref Material**
+
+# Forward Deployed Engineer Intern – Complete Assignment Development Guide
+
+This guide explains how candidates should approach the assignment from absolute basics to a working prototype, including environment setup, database creation, backend development, frontend development, real-time communication, testing, documentation, and final submission.
+
+The objective is to help a beginner understand what to build, why it is required, how to build each component, how different technologies connect, and what to demonstrate during evaluation.
+
+# 1. Understand the business problem first
+
+## 1.1 What exactly are we building?
+
+Imagine a software company called ABC Technologies.
+
+It has three branches:
+
+- Hyderabad
+- Bangalore
+- Chennai
+
+Each branch has different employees and different projects.
+
+The company wants all its employees to manage their work using a collaborative task management application.
+
+For example:
+
+- Hyderabad employees work on Project A.
+- Bangalore employees work on Project B.
+- Chennai employees work on Project C.
+
+Employees should be able to create tasks, assign tasks, move tasks between columns, update task descriptions, and collaborate with other team members.
+
+When one employee moves a task from "To Do" to "In Progress", other employees viewing the same board should immediately see that change.
+
+However, Hyderabad employees must not be able to access Bangalore's private tasks.
+
+This is the central problem the assignment wants candidates to solve.
+
+## 1.2 Understand the hierarchy
+
+Organization: ABC Technologies
+
+Parent company
+
+Hyderabad
+
+Tenant 1
+
+Bangalore
+
+Tenant 2
+
+Chennai
+
+Tenant 3
+
+Users
+
+Boards and tasks
+
+Users
+
+Boards and tasks
+
+Users
+
+Boards and tasks
+
+Each tenant has its own users, boards, columns, tasks and activity history. Data must remain isolated.
+
+Understand these terms before starting:
+
+| Term | Meaning |
+| --- | --- |
+| Organization | Parent company or business |
+| Tenant | A branch or independent workspace belonging to an organization |
+| User | Employee using the application |
+| Membership | Relationship between a user and an organization/tenant, including permissions |
+| Board | Project task management workspace |
+| Column | Task status, such as To Do or Done |
+| Task | Individual work item |
+| Activity Log | Record of actions performed by users |
+
+## 1.3 Understand the final application
+
+Kanban UI designs, themes, templates and downloadable graphic elements on Dribbble
+
+dribbble.com
+
+The application should have:
+
+1. Login and user authentication.
+2. Organization selector.
+3. Branch/tenant switcher.
+4. Kanban board.
+5. Ability to create, edit and delete tasks.
+6. Drag-and-drop task movement.
+7. Task details panel.
+8. Multiple users collaborating simultaneously.
+9. Presence indicators showing who is online.
+10. Activity history.
+11. Protection against unauthorized access.
+12. Conflict handling when multiple users edit the same task.
+
+These are the core expectations from the assignment.
+
+Real-Time Collaboration Assignment.pdf
+
+# 2. Decide the technology stack and architecture
+
+Before writing anything, candidates should decide how the application will be structured.
+
+For this assignment, the following stack is a practical recommendation.
+
+## 2.1 Recommended technology stack
+
+| Technology | Purpose | What candidates should implement |
+| --- | --- | --- |
+| Python | Agentic AI service / optional intelligent assistant | Activity summaries and task assistance |
+| JavaScript | Application programming language | Frontend and backend logic |
+| React.js | Frontend | Kanban interface |
+| Node.js | Backend runtime | API server and business logic |
+| Express.js | Backend framework | CRUD and authentication APIs |
+| PostgreSQL | SQL database | Store organizations, users, tasks, etc. |
+| Socket.IO | Real-time communication | Live updates and presence |
+| Prisma ORM | Database integration | Query and manage PostgreSQL |
+| JWT | Authentication | Verify logged-in users |
+| bcrypt | Password security | Hash passwords |
+| React DnD or dnd-kit | Drag and drop | Move task cards |
+| Git/GitHub | Version control | Maintain project source code |
+| Postman | API testing | Test backend APIs |
+
+Important architectural decision: The assignment does not mandate a particular framework or database. This is one recommended implementation. Using Node.js for the primary backend and Python for an optional AI service allows candidates to demonstrate both Python and Node.js without unnecessarily splitting the core application.
+
+Agentic AI is not a mandatory feature in the uploaded assignment. It can be demonstrated as an optional extension, after the collaboration and isolation requirements work correctly.
+
+## 2.2 Understand the complete architecture
+
+## Application architecture
+
+React.js Frontend
+
+Login • Organization Selector • Kanban • Task Panel
+
+REST API
+
+Express.js / Node.js
+
+CRUD • Authentication • RBAC
+
+WebSocket Server
+
+Socket.IO
+
+Live Updates • Presence
+
+PostgreSQL Database
+
+Organizations • Tenants • Users • Boards • Tasks • Logs
+
+Optional Python AI Service
+
+Task Assistant • Activity Summaries • Natural Language Insights
+
+All application operations must enforce authentication, authorization and tenant-level isolation.
+
+### How these components communicate
+
+Example: A user moves a task from "To Do" to "In Progress".
+
+1. User drags a task card in React.
+2. React sends the update to the Node.js backend.
+3. Backend verifies the user's identity and tenant permissions.
+4. Backend checks the current task version.
+5. Backend updates PostgreSQL.
+6. Backend creates an activity log.
+7. Backend broadcasts a Socket.IO event to authorized users in the same tenant.
+8. Other users receive the event.
+9. Their React interfaces update automatically.
+
+This is the most important workflow to understand before development.
+
+# 3. Set up the development environment
+
+Now candidates should prepare their computers.
+
+## Step 1: Install the required software
+
+Visual Studio Code
+
+Code editor
+
+Download VS Code
+
+Node.js Logo PNG, AI, EPS, CDR, PDF, SVG - iconLogoVector
+
+Node.js (LTS)
+
+Backend runtime and npm
+
+Download Node.js
+
+File:Python logo 01.svg - Wikimedia Commons
+
+Python 3
+
+Optional AI service
+
+Download Python
+
+Homepage | DAO Systems Latino América
+
+PostgreSQL
+
+Relational database
+
+Download PostgreSQL
+
+Hatem Soliman | Systems Engineer
+
+Git
+
+Version control
+
+Download Git
+
+Postman API Platform Logo PNG Vector (SVG) Free Download
+
+Postman
+
+API testing
+
+Download Postman
+
+Also create accounts on GitHub and, if needed, a database hosting platform.
+
+## Step 2: Verify installations
+
+Open the VS Code terminal.
+
+Run these commands individually:
+
+```
+node -v
+npm -v
+python --version
+git --version
+```
+
+For PostgreSQL, verify that the database server is installed and running.
+
+Candidates should understand:
+
+- Node.js executes JavaScript outside the browser.
+- npm installs JavaScript packages.
+- Python executes Python programs.
+- PostgreSQL stores structured application data.
+- Git tracks project changes.
+
+## Step 3: Create the project directory
+
+Create a main folder named:
+
+`collaborative-kanban`
+
+Inside it, create the following structure:
+
+```
+collaborative-kanban/
+│
+├── frontend/
+│
+├── backend/
+│
+├── ai-service/
+│
+├── database/
+│
+├── docs/
+│
+├── screenshots/
+│
+├── README.md
+│
+├── .gitignore
+│
+└── .env.example
+```
+
+Purpose of each folder:
+
+- `frontend`: React application.
+- `backend`: Node.js, Express.js and Socket.IO.
+- `ai-service`: Optional Python Agentic AI service.
+- `database`: SQL schema, migrations and seed data.
+- `docs`: Architecture, ER diagram and API documentation.
+- `screenshots`: Final application screenshots.
+- `README.md`: Complete project explanation.
+
+## Step 4: Initialize the frontend
+
+Navigate to the project directory and create a React application using Vite.
+
+Conceptually, candidates need to:
+
+1. Initialize a React project.
+2. Choose JavaScript as the language.
+3. Install project dependencies.
+4. Start the development server.
+5. Open the local URL in the browser.
+6. Verify that the default React page loads.
+
+Suggested frontend dependencies:
+
+- React Router – navigation.
+- Axios – HTTP requests.
+- Socket.IO Client – real-time communication.
+- dnd-kit – drag-and-drop functionality.
+- Tailwind CSS – styling.
+- A component library such as shadcn/ui – optional UI components.
+
+## Step 5: Initialize the backend
+
+Inside the `backend` folder:
+
+1. Initialize a Node.js project.
+2. Install Express.js.
+3. Install Prisma.
+4. Install the PostgreSQL database driver.
+5. Install Socket.IO.
+6. Install JWT and bcrypt.
+7. Install dotenv for environment variables.
+8. Install validation middleware such as Zod.
+9. Create the application entry point.
+10. Start the backend server and verify that it responds.
+
+At this stage, create a basic health-check endpoint.
+
+For example:
+
+`GET /api/health`
+
+Expected response: The server is running.
+
+## Step 6: Connect PostgreSQL
+
+1. Open PostgreSQL using pgAdmin or a database client.
+2. Create a database named `collaborative_kanban`.
+3. Create a dedicated database user with appropriate permissions.
+4. Configure the database connection in the backend environment.
+5. Configure Prisma to use PostgreSQL.
+6. Verify that the backend can connect to the database.
+7. Run the initial database migration after creating the schema.
+
+Do not hardcode database passwords in source files.
+
+# 4. Design the database (most important part)
+
+The database design is one of the most important evaluation areas because the assignment specifically requires strict multi-tenant data isolation.
+
+The PDF specifies eight main tables:
+
+1. organizations
+2. tenants
+3. users
+4. memberships
+5. boards
+6. columns
+7. tasks
+8. activity_logs
+
+Real-Time Collaboration Assignment.pdf
+
+## Step 1: Understand the relationships
+
+Before creating tables, candidates should understand how the tables connect.
+
+Esquema de base de datos para organizaciones y equipos B2B que se mantiene coherente | AppMaster
+
+appmaster.io
+
+The intended hierarchy is:
+
+`Organization → Tenant → Board → Column → Task`
+
+Users connect to organizations and tenants through memberships.
+
+Activity logs record changes made to business data.
+
+## Step 2: Understand each database table
+
+### Table 1: organizations
+
+Stores parent company information.
+
+| Column | Data type | Purpose |
+| --- | --- | --- |
+| id | UUID | Primary key |
+| name | VARCHAR | Organization name |
+| created_at | TIMESTAMP | Creation date |
+| updated_at | TIMESTAMP | Last update |
+
+Example records:
+
+| id | name |
+| --- | --- |
+| ORG001 | ABC Technologies |
+| ORG002 | XYZ Solutions |
+
+### Table 2: tenants
+
+Stores branches belonging to an organization.
+
+| Column | Data type | Purpose |
+| --- | --- | --- |
+| id | UUID | Primary key |
+| organization_id | UUID | Parent organization |
+| name | VARCHAR | Branch name |
+| created_at | TIMESTAMP | Creation date |
+
+Example:
+
+| id | organization_id | name |
+| --- | --- | --- |
+| TEN001 | ORG001 | Hyderabad |
+| TEN002 | ORG001 | Bangalore |
+| TEN003 | ORG001 | Chennai |
+| TEN004 | ORG002 | Mumbai |
+
+### Table 3: users
+
+Stores registered user information.
+
+| Column | Data type | Purpose |
+| --- | --- | --- |
+| id | UUID | Primary key |
+| name | VARCHAR | Full name |
+| email | VARCHAR | Login email |
+| password_hash | VARCHAR | Encrypted password hash |
+| created_at | TIMESTAMP | Registration date |
+
+Important: Never store plain-text passwords.
+
+### Table 4: memberships
+
+This table is essential for implementing role-based access control.
+
+It establishes which users belong to which organizations and tenants.
+
+| Column | Data type | Purpose |
+| --- | --- | --- |
+| id | UUID | Primary key |
+| user_id | UUID | User reference |
+| organization_id | UUID | Organization reference |
+| tenant_id | UUID | Tenant reference, nullable for org-level membership |
+| role | VARCHAR | User's permission level |
+| created_at | TIMESTAMP | Membership creation |
+
+Example:
+
+| User | Organization | Tenant | Role |
+| --- | --- | --- | --- |
+| Rahul | ABC | Hyderabad | Org Admin |
+| Priya | ABC | Hyderabad | Tenant Admin |
+| Arjun | ABC | Hyderabad | Member |
+| Sneha | ABC | Bangalore | Tenant Admin |
+
+The same user may have memberships in multiple tenants, depending on the application's membership policy.
+
+### Table 5: boards
+
+Stores Kanban boards.
+
+| Column | Data type | Purpose |
+| --- | --- | --- |
+| id | UUID | Primary key |
+| organization_id | UUID | Organization |
+| tenant_id | UUID | Tenant |
+| name | VARCHAR | Board name |
+| description | TEXT | Board details |
+| created_by | UUID | User who created it |
+| created_at | TIMESTAMP | Creation date |
+
+Example boards:
+
+- Website Development
+- Mobile App Development
+- Marketing Campaign
+
+### Table 6: columns
+
+Stores task status columns.
+
+| Column | Data type | Purpose |
+| --- | --- | --- |
+| id | UUID | Primary key |
+| board_id | UUID | Parent board |
+| tenant_id | UUID | Tenant |
+| name | VARCHAR | Column name |
+| position | INTEGER | Display order |
+
+Example:
+
+| Column | Position |
+| --- | --- |
+| To Do | 1 |
+| In Progress | 2 |
+| Testing | 3 |
+| Done | 4 |
+
+### Table 7: tasks
+
+Stores individual work items.
+
+| Column | Data type | Purpose |
+| --- | --- | --- |
+| id | UUID | Primary key |
+| board_id | UUID | Board reference |
+| column_id | UUID | Current column |
+| tenant_id | UUID | Tenant |
+| title | VARCHAR | Task title |
+| description | TEXT | Task details |
+| assigned_to | UUID | Assigned user |
+| position | INTEGER | Task ordering |
+| version | INTEGER | Concurrency version |
+| created_at | TIMESTAMP | Creation date |
+| updated_at | TIMESTAMP | Last update |
+
+Example:
+
+| Task | Column | Assigned to |
+| --- | --- | --- |
+| Design Login Page | To Do | Rahul |
+| Create API | In Progress | Arjun |
+| Fix Authentication | Testing | Priya |
+
+### Table 8: activity_logs
+
+Stores the history of actions.
+
+| Column | Data type | Purpose |
+| --- | --- | --- |
+| id | UUID | Primary key |
+| tenant_id | UUID | Tenant |
+| user_id | UUID | User performing action |
+| entity_type | VARCHAR | Task, board, column, etc. |
+| entity_id | UUID | Related record |
+| action | VARCHAR | Created, Updated, Moved, Deleted |
+| details | JSONB | Change information |
+| created_at | TIMESTAMP | Action time |
+
+Example:
+
+| User | Action | Description |
+| --- | --- | --- |
+| Rahul | Created | New task created |
+| Priya | Updated | Task description updated |
+| Arjun | Moved | Task moved to Done |
+
+## Step 3: Create database relationships
+
+Candidates should establish foreign keys and referential integrity.
+
+Important relationships:
+
+- One organization can have multiple tenants.
+- One organization can have multiple memberships.
+- One user can have multiple memberships.
+- One tenant can have multiple boards.
+- One board can have multiple columns.
+- One column can have multiple tasks.
+- One tenant can have multiple activity logs.
+
+## Step 4: Implement tenant-level isolation
+
+This is a critical requirement.
+
+Suppose Rahul belongs to the Hyderabad tenant.
+
+He should not be able to access Bangalore's boards or tasks.
+
+To achieve this:
+
+1. Add `tenant_id` to all tenant-owned business records.
+2. Authenticate the user.
+3. Retrieve the user's authorized memberships.
+4. Determine the active tenant from an authorized selection.
+5. Validate that the user belongs to that tenant.
+6. Apply the tenant filter to every database operation.
+7. Verify that related records also belong to the same tenant.
+8. Reject unauthorized cross-tenant operations.
+
+For example, when retrieving tasks, the backend should not simply search by task ID.
+
+It should validate both:
+
+- Task ID
+- Authorized tenant ID
+
+A user must not be able to change a tenant ID in the browser or API request and gain access to another tenant's records.
+
+Additional security recommendation: Use PostgreSQL Row-Level Security (RLS) as an extra protection layer if candidates have sufficient time. Backend authorization must still be implemented correctly.
+
+## Step 5: Create indexes
+
+Indexes help the database retrieve records faster.
+
+Candidates should consider indexes on:
+
+- `tenants.organization_id`
+- `memberships.user_id`
+- `memberships.tenant_id`
+- `boards.tenant_id`
+- `columns.board_id`
+- `tasks.tenant_id`
+- `tasks.column_id`
+- `activity_logs.tenant_id`
+
+Also consider composite indexes for common tenant-scoped queries.
+
+## Step 6: Handle task ordering
+
+Tasks need to appear in the correct sequence inside a column.
+
+For example:
+
+To Do:
+
+1. Create Login Page
+2. Create Registration Page
+3. Design Dashboard
+
+Use a position field to maintain ordering.
+
+When a task is dragged:
+
+- Determine its destination column.
+- Determine its new position.
+- Update its position.
+- Reorder affected tasks.
+- Persist the changes in a database transaction.
+
+For larger applications, fractional or rank-based ordering can reduce the number of records that need to be updated.
+
+## Step 7: Handle versioning
+
+The `version` field helps prevent simultaneous edits from silently overwriting one another.
+
+Example:
+
+- Rahul opens Task A with version 1.
+- Priya also opens Task A with version 1.
+- Rahul edits and saves it. The version becomes 2.
+- Priya tries to save her older version 1.
+- Backend detects that the current version is 2.
+- Backend rejects the stale update and asks Priya to refresh or resolve the conflict.
+
+This is called optimistic concurrency control.
+
+# 5. Build the backend using Node.js and Express.js
+
+The backend is responsible for application logic, security, database operations, permissions and real-time event publishing.
+
+Candidates should build it in small modules rather than placing everything in one file.
+
+## Step 1: Create the backend folder structure
+
+Recommended structure:
+
+```
+backend/
+│
+├── src/
+│   ├── config/
+│   │   ├── database.js
+│   │   └── environment.js
+│   │
+│   ├── controllers/
+│   │   ├── auth.controller.js
+│   │   ├── organization.controller.js
+│   │   ├── tenant.controller.js
+│   │   ├── board.controller.js
+│   │   ├── column.controller.js
+│   │   └── task.controller.js
+│   │
+│   ├── middleware/
+│   │   ├── auth.middleware.js
+│   │   ├── tenant.middleware.js
+│   │   └── role.middleware.js
+│   │
+│   ├── routes/
+│   ├── services/
+│   ├── sockets/
+│   ├── utils/
+│   └── app.js
+│
+├── prisma/
+│   └── schema.prisma
+│
+└── package.json
+```
+
+Understand the responsibilities:
+
+- Routes: Define API endpoints.
+- Controllers: Receive requests and return responses.
+- Services: Implement business logic.
+- Middleware: Validate authentication and permissions.
+- Config: Manage database and application configuration.
+- Sockets: Manage real-time events.
+
+## Step 2: Implement authentication
+
+First, implement registration and login.
+
+Required workflow:
+
+1. User opens the registration page.
+2. Enters name, email and password.
+3. Backend validates the input.
+4. Password is hashed using bcrypt.
+5. User record is saved in PostgreSQL.
+6. User logs in with email and password.
+7. Backend verifies the password.
+8. Backend generates a JWT access token.
+9. Frontend stores the token using an appropriate secure strategy.
+10. Subsequent requests include the access token.
+11. Backend verifies the token before processing protected operations.
+
+Candidates should understand:
+
+- Authentication means verifying who the user is.
+- Authorization means determining what the user is allowed to do.
+- JWT is used to communicate verified identity.
+- Password hashing protects stored passwords.
+
+Use secure cookie settings or carefully manage short-lived tokens and refresh tokens. Do not expose passwords or signing secrets.
+
+## Step 3: Implement role-based access control (RBAC)
+
+The assignment specifies three roles.
+
+| Role | Permissions |
+| --- | --- |
+| Org Admin | Manage organization and its tenants, memberships and organization-level settings |
+| Tenant Admin | Manage users, boards and settings within their tenant |
+| Member | View boards and perform permitted task operations |
+
+Candidates should define exact permissions before implementing them.
+
+For example:
+
+Org Admin:
+
+- Create tenants.
+- Manage organization members.
+- View organization-level information.
+- Assign tenant administrators.
+
+Tenant Admin:
+
+- Create and manage boards.
+- Create and manage columns.
+- Manage tenant members.
+- Assign tasks.
+
+Member:
+
+- View authorized boards.
+- Create tasks if permitted.
+- Edit assigned or permitted tasks.
+- Move tasks between columns if permitted.
+
+Do not rely on hiding frontend buttons. Permissions must be enforced on the backend for every protected API and WebSocket action.
+
+## Step 4: Develop CRUD APIs
+
+CRUD means:
+
+- Create
+- Read
+- Update
+- Delete
+
+The assignment requires CRUD APIs for organizations, tenants, boards, columns and tasks.
+
+Suggested API structure:
+
+### Authentication APIs
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| POST | `/api/auth/register` | Register user |
+| POST | `/api/auth/login` | Login |
+| GET | `/api/auth/me` | Get current user |
+
+### Organization APIs
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| POST | `/api/organizations` | Create organization |
+| GET | `/api/organizations` | Get authorized organizations |
+| GET | `/api/organizations/:id` | Get organization |
+| PUT | `/api/organizations/:id` | Update organization |
+| DELETE | `/api/organizations/:id` | Delete organization, subject to policy |
+
+### Tenant APIs
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| POST | `/api/tenants` | Create branch |
+| GET | `/api/tenants` | List authorized tenants |
+| GET | `/api/tenants/:id` | Get tenant |
+| PUT | `/api/tenants/:id` | Update tenant |
+| DELETE | `/api/tenants/:id` | Delete tenant, subject to policy |
+
+### Board APIs
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| POST | `/api/boards` | Create board |
+| GET | `/api/boards` | List boards |
+| GET | `/api/boards/:id` | Get board |
+| PUT | `/api/boards/:id` | Update board |
+| DELETE | `/api/boards/:id` | Delete board |
+
+### Column APIs
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| POST | `/api/columns` | Create column |
+| GET | `/api/boards/:id/columns` | Get columns |
+| PUT | `/api/columns/:id` | Update column |
+| DELETE | `/api/columns/:id` | Delete column |
+
+### Task APIs
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| POST | `/api/tasks` | Create task |
+| GET | `/api/tasks` | List tasks |
+| GET | `/api/tasks/:id` | Get task |
+| PUT | `/api/tasks/:id` | Update task |
+| PATCH | `/api/tasks/:id/move` | Move task |
+| DELETE | `/api/tasks/:id` | Delete task |
+
+These are proposed endpoint conventions, not endpoints prescribed by the assignment.
+
+## Step 5: Implement validation
+
+Every API should validate incoming data.
+
+For example, when creating a task:
+
+- Task title must not be empty.
+- Board ID must exist.
+- Column ID must belong to the selected board.
+- Tenant ID must be authorized.
+- Assigned user must belong to the appropriate tenant.
+- Position must be valid.
+
+Use a validation library such as Zod.
+
+Return meaningful HTTP status codes:
+
+| Status | Meaning |
+| --- | --- |
+| 200 | Successful request |
+| 201 | Record created |
+| 400 | Invalid input |
+| 401 | Not authenticated |
+| 403 | Insufficient permissions |
+| 404 | Resource not found |
+| 409 | Version conflict |
+| 500 | Internal server error |
+
+## Step 6: Implement database transactions
+
+Some operations require multiple database changes.
+
+Example: Moving a task between columns.
+
+The backend may need to:
+
+1. Validate the source task.
+2. Validate the destination column.
+3. Check the tenant.
+4. Update task column and position.
+5. Reorder affected tasks.
+6. Increase the task version.
+7. Record an activity log.
+
+These operations should be performed in a database transaction where appropriate.
+
+If one important operation fails, the transaction should roll back instead of leaving inconsistent records.
+
+## Step 7: Implement activity logs
+
+Whenever a user performs an important action, create an activity record.
+
+Examples:
+
+- User created a task.
+- User edited a task.
+- User changed task assignment.
+- User moved a task.
+- User deleted a task.
+- User created a board.
+
+Activity logs should include the user, tenant, action, entity and timestamp.
+
+# 6. Implement real-time collaboration using Socket.IO
+
+Core requirement
+
+This is one of the most important parts of the assignment.
+
+Without real-time synchronization, the application would only be a normal task management system.
+
+The objective is to allow multiple users to work on the same board and see changes without refreshing the browser.
+
+## Step 1: Understand WebSockets
+
+Normally, an HTTP request works like this:
+
+1. Client sends a request.
+2. Server processes it.
+3. Server returns a response.
+4. The connection is not used as a persistent two-way communication channel.
+
+With WebSockets, a persistent connection allows the client and server to exchange messages in both directions.
+
+For this assignment, use Socket.IO to simplify real-time event handling.
+
+## Step 2: Install Socket.IO
+
+Install:
+
+- Socket.IO in the Node.js backend.
+- Socket.IO Client in the React frontend.
+
+Configure the Socket.IO server alongside the Express application.
+
+The server should:
+
+1. Accept client connections.
+2. Authenticate connecting users.
+3. Verify their tenant membership.
+4. Join them to authorized tenant rooms.
+5. Listen for permitted actions.
+6. Broadcast updates to the relevant users.
+
+## Step 3: Create tenant-specific rooms
+
+This is very important.
+
+Example room names:
+
+```
+tenant:TEN001
+tenant:TEN002
+tenant:TEN003
+```
+
+When Rahul logs into Hyderabad:
+
+- Authenticate Rahul.
+- Verify his Hyderabad membership.
+- Join him to `tenant:TEN001`.
+
+When Priya logs into Bangalore:
+
+- Authenticate Priya.
+- Verify her Bangalore membership.
+- Join her to `tenant:TEN002`.
+
+A Hyderabad update must never be broadcast to the Bangalore room.
+
+Do not allow clients to join arbitrary rooms simply by sending a tenant ID. The backend must authorize room membership.
+
+## Step 4: Define real-time events
+
+Candidates should create a consistent event naming convention.
+
+| Event | Purpose |
+| --- | --- |
+| `tenant:join` | Join authorized tenant room |
+| `task:created` | New task created |
+| `task:updated` | Task updated |
+| `task:moved` | Task moved between columns |
+| `task:deleted` | Task deleted |
+| `presence:online` | User becomes online |
+| `presence:offline` | User disconnects |
+| `presence:update` | Presence changes |
+| `board:updated` | Board information changed |
+
+These are suggested names.
+
+## Step 5: Implement live task updates
+
+Consider this example.
+
+Scenario: Two users accessing the same board
+
+Rahul
+
+Browser A
+
+Moves Task A from To Do to In Progress.
+
+Priya
+
+Browser B
+
+Sees Task A move automatically.
+
+Socket.IO
+
+Authorized tenant room
+
+Live synchronization
+
+Both users see the same committed task state without refreshing.
+
+Implementation steps:
+
+1. Rahul performs the drag-and-drop action.
+2. Frontend sends a move request.
+3. Backend validates Rahul's membership and permissions.
+4. Backend checks the task's version.
+5. Backend saves the new position.
+6. Backend records the activity.
+7. Backend broadcasts `task:moved` to the authorized tenant room.
+8. Priya receives the event.
+9. React updates the corresponding task card.
+
+Important: The database should be updated successfully before broadcasting the committed change.
+
+## Step 6: Implement presence indicators
+
+Presence indicates which users are currently online.
+
+Example UI:
+
+Website Development
+
+3 online
+
+Rahul
+
+Priya
+
+Arjun
+
+Illustrative presence indicator for one tenant.
+
+Implementation:
+
+1. User connects to Socket.IO.
+2. Server identifies the user.
+3. Server records that the user is online.
+4. Server broadcasts presence to authorized users.
+5. On disconnection, server updates presence.
+6. Other users see the online status change.
+
+Use connection tracking or heartbeats to handle dropped network connections. If a user has multiple tabs open, they should not appear offline simply because one tab disconnects.
+
+## Step 7: Handle network recovery
+
+Suppose a user loses internet connectivity.
+
+1. Socket connection drops.
+2. Frontend detects disconnection.
+3. Display a reconnecting indicator.
+4. Attempt automatic reconnection.
+5. Reauthenticate and rejoin authorized rooms.
+6. Fetch the latest board data from the backend.
+7. Reconcile local state with the database.
+8. Continue receiving updates.
+
+Never assume that the client received every event while disconnected.
+
+# 7. Develop the frontend using React.js
+
+The frontend should be user-friendly, responsive and easy to demonstrate.
+
+## Step 1: Design the application screens
+
+Candidates should create the following screens:
+
+| Screen | Purpose |
+| --- | --- |
+| Login | User authentication |
+| Register | New user registration |
+| Dashboard | Organization and tenant overview |
+| Organization Selector | Switch between organizations |
+| Tenant Switcher | Switch between branches |
+| Kanban Board | Display tasks |
+| Task Details | View and edit task information |
+| Activity History | View recent activities |
+| User Management | Manage memberships and roles |
+
+## Step 2: Create a React component structure
+
+Recommended structure:
+
+```
+frontend/
+│
+├── src/
+│   ├── components/
+│   │   ├── Navbar/
+│   │   ├── Sidebar/
+│   │   ├── OrganizationSelector/
+│   │   ├── TenantSwitcher/
+│   │   ├── KanbanBoard/
+│   │   ├── BoardColumn/
+│   │   ├── TaskCard/
+│   │   ├── TaskDetails/
+│   │   ├── PresenceIndicator/
+│   │   └── ActivityLog/
+│   │
+│   ├── pages/
+│   │   ├── Login.jsx
+│   │   ├── Dashboard.jsx
+│   │   └── Board.jsx
+│   │
+│   ├── services/
+│   │   ├── api.js
+│   │   └── socket.js
+│   │
+│   ├── hooks/
+│   ├── context/
+│   ├── routes/
+│   └── App.jsx
+│
+└── package.json
+```
+
+## Step 3: Build the login and registration screens
+
+Create a simple authentication interface.
+
+Registration fields:
+
+- Full name
+- Email
+- Password
+- Confirm password
+
+Login fields:
+
+- Email
+- Password
+
+Connect these screens to the authentication APIs.
+
+After successful login:
+
+- Store authentication state securely.
+- Fetch the user's profile.
+- Fetch authorized organizations and tenants.
+- Redirect to the dashboard.
+
+## Step 4: Build the organization selector
+
+At the top of the dashboard, provide an organization dropdown.
+
+Example:
+
+CURRENT ORGANIZATION
+
+ABC Technologies
+
+Hyderabad
+
+Selected
+
+Bangalore
+
+Chennai
+
+Illustrative organization and tenant selection interface.
+
+The options should come from the backend, not from hardcoded frontend data.
+
+When the user switches organizations:
+
+1. Validate access.
+2. Load the new organization's tenants.
+3. Clear data from the previous context.
+4. Display only authorized tenants.
+
+## Step 5: Build the tenant switcher
+
+Once an organization is selected, show its authorized branches.
+
+When the user selects Hyderabad:
+
+- Fetch Hyderabad's boards.
+- Fetch its columns.
+- Fetch its tasks.
+- Connect to the authorized tenant's real-time room.
+
+When the user switches to Bangalore, repeat the process using Bangalore's authorized data.
+
+Do not display stale data from the previous tenant while switching.
+
+## Step 6: Create the Kanban board
+
+DHTMLX JavaScript Kanban: Handy Addition to Any Project Management App | by JavaScript UI Libraries — DHTMLX | Medium
+
+dhtmlx.medium.com
+
+Create four default columns:
+
+1. To Do
+2. In Progress
+3. Testing
+4. Done
+
+Each column should contain task cards.
+
+A task card should display:
+
+- Task title
+- Short description
+- Assigned employee
+- Priority
+- Due date
+- Optional labels
+
+## Step 7: Implement drag-and-drop
+
+Use `dnd-kit` or another drag-and-drop library.
+
+Steps:
+
+1. Make each task card draggable.
+2. Make each column a drop target.
+3. Detect the dragged task.
+4. Identify the destination column.
+5. Calculate its new position.
+6. Update the interface optimistically.
+7. Send the move request to the backend.
+8. If successful, retain the updated state.
+9. If unsuccessful, revert or reconcile the UI.
+10. Receive the committed update through Socket.IO.
+
+Candidates should test both:
+
+- Moving tasks within the same column.
+- Moving tasks across different columns.
+
+## Step 8: Create the task details panel
+
+When a user clicks a task card, open a modal or side panel.
+
+Introducing: Your new task view
+
+todoist.com
+
+Include:
+
+- Task title
+- Description
+- Status
+- Assignee
+- Priority
+- Due date
+- Created date
+- Last updated date
+- Activity history
+
+Provide Edit and Delete actions according to the user's permissions.
+
+## Step 9: Implement frontend state management
+
+Candidates need to understand how React manages application data.
+
+Suggested choices:
+
+- React Context for authentication and selected organization/tenant.
+- TanStack Query for API data fetching and caching.
+- Local component state for modals and form fields.
+- Socket.IO listeners for incoming real-time events.
+
+Important: When a real-time event arrives, update the relevant cached board data instead of unnecessarily reloading the entire application.
+
+## Step 10: Implement optimistic UI updates
+
+An optimistic update means the interface updates immediately before waiting for the server response.
+
+Example:
+
+Rahul moves a task.
+
+Instead of waiting for the database response:
+
+1. Immediately show the task in the destination column.
+2. Send the request to the backend.
+3. If successful, keep the update.
+4. If the server rejects it, restore the previous state or refetch the authoritative board.
+
+Optimistic updates improve the user experience, but they must be reconciled with server-side version checks.
+
+# 8. Implement concurrency and conflict resolution
+
+High-priority evaluation area
+
+The assignment explicitly requires concurrency handling, conflicting edits and drag-and-drop conflict resolution.
+
+Real-Time Collaboration Assignment.pdf
+
+Real-Time Collaboration Assignment.pdf
+
+Candidates should understand these scenarios.
+
+## Scenario 1: Two users edit the same task
+
+Example:
+
+- Rahul opens Task A.
+- Priya opens Task A.
+- Both see version 1.
+- Rahul changes the title.
+- Priya changes the description.
+- Rahul saves first.
+- Priya tries to save using the old version.
+
+Expected behavior:
+
+1. Backend detects the stale version.
+2. Backend returns HTTP 409 Conflict.
+3. Frontend fetches the latest task.
+4. User is informed that another person has updated the task.
+5. The application offers a refresh or conflict-resolution option.
+
+For a basic prototype, rejecting stale updates and allowing a refresh is acceptable.
+
+An advanced implementation can merge non-overlapping field changes.
+
+## Scenario 2: Two users move the same task
+
+Example:
+
+- Rahul moves Task A to In Progress.
+- Priya moves Task A to Done almost simultaneously.
+
+Expected behavior:
+
+- Backend determines which operation successfully commits first.
+- The second operation checks the updated version.
+- If stale, it is rejected or reconciled.
+- All users eventually see the authoritative database state.
+
+## Scenario 3: Two users reorder different tasks
+
+Suppose Rahul moves Task A to position 2 while Priya moves Task B to position 3.
+
+The backend should:
+
+- Validate both operations.
+- Recalculate positions.
+- Perform consistent ordering updates.
+- Avoid duplicate or invalid positions where the design requires uniqueness.
+- Broadcast the resulting state.
+
+## Recommended concurrency strategy
+
+Use:
+
+1. Optimistic locking with a version number.
+2. Database transactions.
+3. Server-authoritative task ordering.
+4. Conflict responses.
+5. Frontend reconciliation.
+6. Idempotency or operation IDs for retry-sensitive operations.
+
+For a prototype, these are much easier to implement and explain than a complex distributed conflict-free system.
+
+# 9. Implement the Agentic AI component (optional enhancement)
+
+The uploaded assignment does not specifically require an AI agent. However, because the role assesses Agentic AI skills, candidates can add a small AI feature after completing the core application.
+
+Do not sacrifice tenant isolation, CRUD, drag-and-drop or real-time functionality to build an unnecessary AI feature.
+
+## Recommended feature: AI Kanban Assistant
+
+Create an AI assistant that can understand task-related questions and provide useful insights.
+
+Example user questions:
+
+- "Summarize today's activities."
+- "Which tasks are overdue?"
+- "Show tasks that are still pending."
+- "Summarize the work completed by the Hyderabad team."
+- "What are the most urgent tasks?"
+
+Plane | AI-Native Project Management built for all teams
+
+plane.so
+
+## Step 1: Understand Agentic AI
+
+A normal chatbot primarily responds to questions.
+
+An AI agent can:
+
+1. Understand a user's objective.
+2. Decide what information it needs.
+3. Select an appropriate tool.
+4. Execute an authorized operation.
+5. Interpret the result.
+6. Return a response.
+
+For this project, the tools could be:
+
+- Get tenant tasks.
+- Get overdue tasks.
+- Get activity history.
+- Get task statistics.
+- Summarize board progress.
+
+## Step 2: Set up the Python AI service
+
+Create the `ai-service` folder.
+
+Recommended tools:
+
+- Python
+- FastAPI
+- Pydantic
+- An LLM API
+- An agent framework such as LangGraph (optional)
+
+Set up a Python virtual environment, install the dependencies, configure environment variables and create a health-check endpoint.
+
+## Step 3: Create agent tools
+
+Define a limited set of tools.
+
+| Tool | Purpose |
+| --- | --- |
+| `get_tasks` | Retrieve authorized tenant tasks |
+| `get_overdue_tasks` | Retrieve overdue tasks |
+| `get_activity_logs` | Retrieve recent activities |
+| `get_board_summary` | Retrieve board statistics |
+
+The agent should not directly access unrestricted database records.
+
+## Step 4: Connect the Python service to Node.js
+
+Suggested flow:
+
+1. User asks a question in React.
+2. React sends it to Node.js.
+3. Node.js authenticates the user.
+4. Node.js verifies tenant membership.
+5. Node.js forwards the question and trusted context to Python.
+6. Python agent determines which tools are required.
+7. Tools retrieve only authorized data.
+8. Python generates a response.
+9. Node.js returns the response to React.
+
+The Python service must not trust tenant IDs supplied only by the browser. The backend should provide verified context.
+
+## Step 5: Test the AI assistant
+
+Example:
+
+User: "Summarize the Hyderabad board."
+
+Expected agent workflow:
+
+1. Understand the request.
+2. Identify the summary operation.
+3. Call the authorized board-summary tool.
+4. Retrieve relevant data.
+5. Calculate task counts.
+6. Summarize completed and pending work.
+7. Return the result.
+
+Example response:
+
+- Total tasks: 20
+- Completed: 12
+- In Progress: 5
+- To Do: 3
+- Completion rate: 60%
+
+These are illustrative values, not actual project data.
+
+## Step 6: Add safety restrictions
+
+The AI assistant should:
+
+- Respect the logged-in user's permissions.
+- Never retrieve another tenant's data.
+- Avoid unrestricted SQL execution.
+- Use allowlisted tools.
+- Validate all tool inputs.
+- Require confirmation for destructive actions.
+- Keep audit records for actions that change application data.
+
+Recommendation: A read-only AI assistant is the best optional enhancement for a beginner-level prototype. It demonstrates Agentic AI concepts without introducing unnecessary security risks.
+
+# 10. Testing the complete application
+
+Testing is essential because the evaluation criteria explicitly include correctness, tenant isolation, edge cases and scalability.
+
+Real-Time Collaboration Assignment.pdf
+
+Candidates should not simply check whether the application opens. They should test real business scenarios.
+
+## Step 1: Test all CRUD operations
+
+Use Postman to test:
+
+- Create organization.
+- Create tenant.
+- Register users.
+- Create board.
+- Create columns.
+- Create tasks.
+- Retrieve tasks.
+- Update task information.
+- Move tasks.
+- Delete tasks.
+
+For every operation, verify that the database is updated correctly.
+
+## Step 2: Test role-based permissions
+
+Create three test accounts.
+
+| User | Role | Expected access |
+| --- | --- | --- |
+| Rahul | Org Admin | Organization and tenant management |
+| Priya | Tenant Admin | Manage Hyderabad tenant |
+| Arjun | Member | Perform permitted task operations |
+
+Test whether users can perform only their authorized actions.
+
+For example:
+
+- Can a member create a new tenant?
+- Can a tenant admin modify another tenant's board?
+- Can an organization admin manage tenants?
+- Can an unauthorized user delete a board?
+
+Expected behavior: Unauthorized operations must be rejected by the backend.
+
+## Step 3: Test tenant isolation
+
+This is a mandatory test.
+
+Create the following test environment:
+
+| Organization | Tenant | User |
+| --- | --- | --- |
+| ABC Technologies | Hyderabad | Rahul |
+| ABC Technologies | Bangalore | Priya |
+| XYZ Solutions | Mumbai | Arjun |
+
+Test these cases:
+
+1. Rahul logs into Hyderabad.
+2. Rahul can see Hyderabad boards.
+3. Rahul tries to access a Bangalore task using its ID.
+4. The backend rejects the request.
+5. Rahul modifies the tenant ID in an API request.
+6. The backend still rejects unauthorized access.
+7. Rahul attempts to connect to the Bangalore WebSocket room.
+8. The server denies unauthorized room access.
+9. A Bangalore task update occurs.
+10. Rahul does not receive the Bangalore event.
+
+Repeat similar tests across organizations.
+
+## Step 4: Test real-time synchronization
+
+Use two separate browser sessions.
+
+Example:
+
+- Browser A: Rahul.
+- Browser B: Priya.
+- Both access the Hyderabad board.
+
+Test:
+
+1. Rahul creates a task.
+2. Priya should see it immediately.
+3. Priya updates the task title.
+4. Rahul should see the updated title.
+5. Rahul moves the task.
+6. Priya should see the movement.
+7. Rahul deletes a task.
+8. Priya should see it disappear.
+
+Also test that a user in Bangalore does not receive Hyderabad updates.
+
+## Step 5: Test concurrency
+
+Test:
+
+- Two users editing the same task.
+- Two users moving the same task.
+- Two users reordering different tasks.
+- One user editing while another deletes.
+- A stale version attempting to overwrite a newer version.
+
+Expected result: The system should prevent silent data overwrites and maintain consistent task ordering.
+
+## Step 6: Test network recovery
+
+1. Open the application in two browsers.
+2. Disconnect one browser from the internet.
+3. Make changes from the other browser.
+4. Reconnect the disconnected browser.
+5. Verify that it rejoins the correct tenant room.
+6. Fetch the latest board state.
+7. Verify that no stale data remains.
+
+## Step 7: Test frontend functionality
+
+Check:
+
+- Login and logout.
+- Organization switching.
+- Tenant switching.
+- Task creation.
+- Task editing.
+- Task deletion.
+- Drag-and-drop.
+- Task details.
+- Activity history.
+- Presence indicators.
+- Loading states.
+- Error messages.
+- Mobile responsiveness.
+
+## Step 8: Test backend and database performance
+
+For a basic prototype, measure:
+
+- API response times.
+- Number of tasks retrieved.
+- Database query performance.
+- Number of simultaneous connections tested.
+- WebSocket event delivery.
+- Behavior when requests fail.
+
+Candidates can use Postman, browser developer tools and simple load-testing tools such as k6.
+
+Do not claim production scalability based only on a few successful manual tests.
+
+## Testing checklist
+
+Project testing tracker
+
+0/15 completed
+
+- [ ]  
+    
+    All CRUD APIs work correctly
+    
+- [ ]  
+    
+    Authentication and JWT validation work
+    
+- [ ]  
+    
+    Three RBAC roles are implemented
+    
+- [ ]  
+    
+    Organization and tenant hierarchy works
+    
+- [ ]  
+    
+    Cross-tenant access is blocked
+    
+- [ ]  
+    
+    Cross-organization access is blocked
+    
+- [ ]  
+    
+    WebSocket rooms are tenant-scoped
+    
+- [ ]  
+    
+    Real-time task synchronization works
+    
+- [ ]  
+    
+    Presence indicators work
+    
+- [ ]  
+    
+    Optimistic UI updates work
+    
+- [ ]  
+    
+    Task versioning prevents stale updates
+    
+- [ ]  
+    
+    Drag-and-drop ordering is consistent
+    
+- [ ]  
+    
+    Activity logs are recorded
+    
+- [ ]  
+    
+    Network reconnection restores board state
+    
+- [ ]  
+    
+    README and documentation are complete
+    
+
+# 11. Prepare the final deliverables
+
+Mandatory submission section
+
+The assignment explicitly requires five deliverables:
+
+1. Backend + real-time server.
+2. Frontend UI.
+3. Database schema (ER diagram).
+4. README (architecture, tenancy model, trade-offs).
+5. API + WebSocket documentation.
+
+Real-Time Collaboration Assignment.pdf
+
+Candidates should prepare each deliverable separately.
+
+## Deliverable 1: Backend + Real-Time Server
+
+What to submit:
+
+The complete backend source code.
+
+It should contain:
+
+- Express.js application.
+- Authentication and authorization.
+- Organization APIs.
+- Tenant APIs.
+- Board APIs.
+- Column APIs.
+- Task APIs.
+- Database integration.
+- Tenant isolation middleware.
+- Socket.IO implementation.
+- Presence handling.
+- Concurrency handling.
+- Activity logging.
+- Environment variable example.
+
+How to prepare it:
+
+1. Remove unnecessary files.
+2. Organize source code into modules.
+3. Ensure all dependencies are listed in package.json.
+4. Include database migrations.
+5. Include sample seed data.
+6. Include `.env.example`.
+7. Check that the project starts using documented commands.
+8. Remove actual passwords, API keys and secrets.
+9. Push the complete source code to GitHub.
+
+Do not submit only screenshots of the backend.
+
+## Deliverable 2: Frontend UI
+
+What to submit:
+
+The complete React frontend source code.
+
+Expected components:
+
+- Login and registration.
+- Organization selector.
+- Tenant switcher.
+- Kanban board.
+- Task cards.
+- Drag-and-drop.
+- Task details panel.
+- Presence indicators.
+- Activity history.
+- Real-time synchronization.
+
+How to prepare it:
+
+1. Organize React components.
+2. Remove unnecessary development files.
+3. Configure API base URLs through environment variables.
+4. Configure the Socket.IO connection.
+5. Check all screens.
+6. Verify responsive design.
+7. Take screenshots of the working application.
+8. Include frontend setup instructions.
+
+Recommended screenshots:
+
+SAAS Application Login Page UI Design by Nazmul Haque Shanto for Craftora on Dribbble
+
+1. Login page
+
+Entity selection & workspace switching by Rahul R on Dribbble
+
+2. Organization and tenant selector
+
+Canvaso - Project Management Dashboard :: Behance
+
+3. Kanban board
+
+4. Task details
+
+The Ultimate Guide to Managing Remote Teams | Teamflow
+
+5. Presence indicators
+
+History and Audit for Trades | Service Opus
+
+6. Activity history
+
+These are visual references for the expected screens, not screenshots of a completed implementation.
+
+## Deliverable 3: Database Schema and ER Diagram
+
+What to submit:
+
+A database ER diagram showing all eight required tables and their relationships.
+
+Recommended tools:
+
+- draw.io
+- dbdiagram.io
+- PostgreSQL
+
+How to prepare it:
+
+1. Identify all tables.
+2. Add columns and data types.
+3. Mark primary keys.
+4. Mark foreign keys.
+5. Show one-to-many relationships.
+6. Show user membership relationships.
+7. Highlight tenant_id fields.
+8. Show how tasks connect to boards and columns.
+9. Export the diagram as PNG or PDF.
+10. Save the original editable diagram in the docs folder.
+
+Recommended filename:
+
+`docs/database-erd.png`
+
+Candidates should also include their actual SQL schema or Prisma schema, not just an image.
+
+## Deliverable 4: README.md
+
+This is a very important deliverable because evaluators may first read the README before running the application.
+
+The README should contain the following sections:
+
+| Section | What to explain |
+| --- | --- |
+| Project Overview | What the application does |
+| Business Problem | Why the system is required |
+| Features | Implemented functionality |
+| Technology Stack | Python, JavaScript, React, Node, SQL, etc. |
+| Architecture | Frontend, backend, database and real-time flow |
+| Tenancy Model | Organization and tenant hierarchy |
+| RBAC | Permissions of all three roles |
+| Database Design | Tables and relationships |
+| Real-Time Communication | WebSocket architecture |
+| Concurrency | Conflict resolution strategy |
+| Setup Instructions | How to install and run |
+| Environment Variables | Required configuration |
+| API Documentation | API reference |
+| Testing | Test scenarios and results |
+| Limitations | Current prototype limitations |
+| Future Improvements | Planned enhancements |
+
+### Suggested README structure
+
+```
+# Real-Time Collaborative Kanban Board
+
+## 1. Project Overview
+
+## 2. Business Problem
+
+## 3. Features
+
+## 4. Technology Stack
+
+## 5. System Architecture
+
+## 6. Multi-Tenant Architecture
+
+## 7. Role-Based Access Control
+
+## 8. Database Design
+
+## 9. Real-Time Communication
+
+## 10. Concurrency Handling
+
+## 11. Installation and Setup
+
+## 12. Environment Variables
+
+## 13. Running the Application
+
+## 14. API Documentation
+
+## 15. WebSocket Events
+
+## 16. Testing and Validation
+
+## 17. Known Limitations
+
+## 18. Future Enhancements
+```
+
+### Particularly important: Explain tenancy model
+
+Candidates must explain:
+
+- Why organization and tenant are separate entities.
+- How tenant_id is assigned.
+- How tenant_id is validated.
+- How data isolation is enforced.
+- How WebSocket rooms are scoped.
+- How cross-tenant access is prevented.
+
+### Explain architectural trade-offs
+
+For example:
+
+| Decision | Reason |
+| --- | --- |
+| PostgreSQL | Relational data and transactions |
+| Socket.IO | Simplifies real-time communication |
+| JWT | Stateless identity verification |
+| Version numbers | Detect stale updates |
+| React | Component-based frontend |
+| Tenant-scoped rooms | Isolate real-time updates |
+
+Do not simply list technologies. Explain why each was chosen and what limitations it introduces.
+
+## Deliverable 5: API and WebSocket Documentation
+
+Candidates should prepare a separate API document.
+
+Recommended tools:
+
+- Postman Collections.
+- Swagger/OpenAPI.
+- Markdown documentation.
+
+### API documentation should contain
+
+For every API:
+
+1. API name.
+2. HTTP method.
+3. Endpoint URL.
+4. Authentication requirement.
+5. Request headers.
+6. Request body.
+7. Successful response.
+8. Error responses.
+9. Required role.
+10. Tenant-scoping behavior.
+
+Example:
+
+Move Task API
+
+| Property | Details |
+| --- | --- |
+| Method | PATCH |
+| Endpoint | `/api/tasks/:id/move` |
+| Authentication | JWT |
+| Purpose | Move task to another column |
+| Required data | Destination column, new position, expected version |
+| Response | Updated task |
+| Conflict | HTTP 409 |
+
+### WebSocket documentation should contain
+
+| Event | Direction | Description |
+| --- | --- | --- |
+| `task:created` | Server → Client | New task notification |
+| `task:updated` | Server → Client | Task update |
+| `task:moved` | Server → Client | Task movement |
+| `task:deleted` | Server → Client | Task deletion |
+| `presence:online` | Server → Client | User online |
+| `presence:offline` | Server → Client | User offline |
+
+Explain authentication, tenant room authorization, event payloads, acknowledgements and reconnection behavior.
+
+# 12. Prepare sample data for the demonstration
+
+Candidates should not demonstrate an empty application.
+
+Prepare realistic dummy data.
+
+## Recommended sample organization
+
+Organization 1: ABC Technologies
+
+Tenants:
+
+- Hyderabad
+- Bangalore
+- Chennai
+
+Organization 2: XYZ Solutions
+
+Tenants:
+
+- Mumbai
+- Pune
+
+## Recommended test users
+
+| User | Organization | Tenant | Role |
+| --- | --- | --- | --- |
+| Rahul | ABC | Hyderabad | Org Admin |
+| Priya | ABC | Hyderabad | Tenant Admin |
+| Arjun | ABC | Hyderabad | Member |
+| Sneha | ABC | Bangalore | Tenant Admin |
+| Kiran | XYZ | Mumbai | Member |
+
+Use dummy emails and passwords.
+
+## Recommended sample boards
+
+Hyderabad:
+
+- Website Development
+- Mobile Application Development
+
+Bangalore:
+
+- CRM Development
+- AI Automation
+
+Mumbai:
+
+- Customer Support Platform
+
+## Recommended sample tasks
+
+| Task | Status | Assigned to |
+| --- | --- | --- |
+| Create Login Page | To Do | Rahul |
+| Develop Registration API | In Progress | Arjun |
+| Test Authentication | Testing | Priya |
+| Deploy Dashboard | Done | Rahul |
+| Fix API Validation | To Do | Arjun |
+
+Prepare at least 10–20 tasks across the sample boards.
+
+The sample data should make it easy to demonstrate every major feature.
+
+# 13. How to run the complete application
+
+Candidates should ensure the evaluator can start the project without spending hours understanding the configuration.
+
+Recommended local development setup:
+
+Terminal 1 – Backend
+
+```
+cd backend
+npm install
+npm run dev
+```
+
+Example: localhost:5000
+
+Terminal 2 – Frontend
+
+```
+cd frontend
+npm install
+npm run dev
+```
+
+Example: localhost:5173
+
+Terminal 3 – Python AI Service (optional)
+
+```
+cd ai-service
+python -m venv venv
+```
+
+Activate the virtual environment, install dependencies and start the FastAPI application using the documented command.
+
+Example: localhost:8000
+
+Database
+
+Ensure PostgreSQL is running and the required migrations and seed data have been applied.
+
+These ports are suggested examples, not mandatory values.
+
+## Deployment recommendation
+
+For a more complete submission, candidates can deploy:
+
+| Component | Suggested hosting |
+| --- | --- |
+| React frontend | Vercel |
+| Node.js backend | Render or Railway |
+| PostgreSQL | Supabase or Neon |
+| Python AI service | Render or Railway |
+| Source code | GitHub |
+
+Useful links:
+
+- Vercel
+- Render
+- Railway
+- Supabase
+- Neon
+
+Deployment is recommended for easier evaluation, but the assignment does not explicitly mandate a hosted application. A working local setup with clear instructions is also acceptable.
+
+# 14. GitHub repository preparation
+
+Candidates should submit their project through a GitHub repository.
+
+Suggested repository structure:
+
+```
+collaborative-kanban/
+│
+├── frontend/
+├── backend/
+├── ai-service/
+├── database/
+├── docs/
+│   ├── architecture.png
+│   ├── database-erd.png
+│   ├── api-documentation.md
+│   └── websocket-documentation.md
+│
+├── screenshots/
+│
+├── README.md
+├── .gitignore
+└── .env.example
+```
+
+### GitHub preparation steps
+
+1. Create a GitHub account if necessary.
+2. Create a new repository.
+3. Initialize Git in the project directory.
+4. Add the project files.
+5. Commit changes with meaningful messages.
+6. Push the project to GitHub.
+7. Verify the repository contains all required folders.
+8. Verify the README displays correctly.
+9. Ensure no credentials or `.env` files are committed.
+10. Provide the repository link in the submission.
+
+For an assignment, the repository should ideally be private if the company requests private submissions. Provide evaluator access where necessary.
+
+# 15. Final submission package
+
+I recommend candidates prepare one organized submission folder.
+
+Real-Time-Collaboration-Assignment/
+
+Source-Code/
+
+GitHub repository link
+
+Database-ER-Diagram.pdf
+
+README.md
+
+API-Documentation.pdf
+
+WebSocket-Documentation.pdf
+
+Screenshots/
+
+Demo-Video.mp4
+
+Test-Report.pdf
+
+Deployment-URL.txt
+
+If deployed
+
+The demo video and test report are additional recommended deliverables, not explicitly required by the assignment.
+
+# 16. Prepare a demonstration video
+
+Candidates should prepare a 5–8 minute demonstration video.
+
+Suggested sequence:
+
+| Time | Demonstration |
+| --- | --- |
+| 0:00–0:45 | Project introduction and architecture |
+| 0:45–1:30 | Login and organization selection |
+| 1:30–2:15 | Tenant switching |
+| 2:15–3:15 | Create, update and delete tasks |
+| 3:15–4:15 | Drag-and-drop |
+| 4:15–5:15 | Two-user real-time collaboration |
+| 5:15–6:00 | Presence and activity history |
+| 6:00–7:00 | Cross-tenant access prevention |
+| 7:00–8:00 | Concurrency and optional AI demonstration |
+
+Most important: Demonstrate two separate browser sessions simultaneously. This provides much stronger evidence of real-time collaboration than simply showing the board in one browser.
+
+# 17. Suggested development timeline
+
+For candidates who have approximately 5–7 days, I recommend the following execution plan.
+
+## 7-day project roadmap
+
+1. Day 1 – Planning and environment setup
+    - Understand the business problem.
+    - Finalize architecture and tech stack.
+    - Install development tools.
+    - Create GitHub repository.
+    - Design database schema and ER diagram.
+2. Day 2 – Database and backend foundation
+    - Create PostgreSQL database.
+    - Implement tables and relationships.
+    - Configure Prisma.
+    - Implement registration and login.
+    - Implement JWT authentication.
+3. Day 3 – Backend APIs and security
+    - Implement organization and tenant APIs.
+    - Implement board and column APIs.
+    - Implement task CRUD APIs.
+    - Implement RBAC.
+    - Implement tenant isolation.
+    - Test APIs using Postman.
+4. Day 4 – Frontend development
+    - Create React application.
+    - Build login and dashboard.
+    - Implement organization selector.
+    - Implement tenant switcher.
+    - Build Kanban board.
+    - Implement task details and drag-and-drop.
+5. Day 5 – Real-time functionality
+    - Integrate Socket.IO.
+    - Implement tenant-specific rooms.
+    - Implement live task updates.
+    - Implement presence.
+    - Implement activity logs.
+    - Implement optimistic UI.
+6. Day 6 – Concurrency and optional AI
+    - Implement task versioning.
+    - Handle concurrent edits.
+    - Handle drag-and-drop conflicts.
+    - Implement reconnection.
+    - Add a basic Python AI assistant if time permits.
+7. Day 7 – Testing and submission
+    - Test all APIs.
+    - Test tenant isolation.
+    - Test two-user collaboration.
+    - Fix bugs.
+    - Prepare ER diagram.
+    - Complete README and documentation.
+    - Take screenshots.
+    - Record demo video.
+    - Verify GitHub submission.
+
+This timeline is a recommended plan, not a guarantee that every feature can be completed in seven days. Candidates should prioritize a correct working core over an incomplete collection of advanced features.
+
+# 18. Evaluation criteria and what candidates should prioritize
+
+The assignment specifies the following evaluation weightage:
+
+Assignment evaluation breakdown
+
+Architecture
+
+## 30%
+
+Modular architecture and tenancy modeling
+
+Correctness
+
+## 20%
+
+Handling edge cases correctly
+
+Advanced Thinking
+
+## 20%
+
+Concurrency and scalability
+
+Database Design
+
+## 15%
+
+Correct tenant isolation
+
+Frontend Quality
+
+## 15%
+
+UI and user experience
+
+Real-Time Collaboration Assignment.pdf
+
+## My recommended priority order
+
+| Priority | Feature | Why it matters |
+| --- | --- | --- |
+| 1 | Multi-tenant database architecture | Fundamental business requirement |
+| 2 | Tenant-level data isolation | Critical security requirement |
+| 3 | Authentication and RBAC | Required for access control |
+| 4 | Complete CRUD APIs | Core backend functionality |
+| 5 | Functional Kanban UI | Core frontend functionality |
+| 6 | Real-time synchronization | Main application differentiator |
+| 7 | Concurrency handling | Important correctness requirement |
+| 8 | Presence and activity logs | Advanced collaboration features |
+| 9 | Network recovery and undo/redo | Additional robustness |
+| 10 | Agentic AI assistant | Optional role-specific enhancement |
+
+# 19. Important tips for candidates using ChatGPT, Claude or other AI coding tools
+
+Candidates are allowed to use AI tools, but they should not simply generate an entire application and submit it without understanding it.
+
+They should use AI as a development assistant.
+
+## Recommended AI-assisted workflow
+
+| Development stage | What to ask AI |
+| --- | --- |
+| Requirement analysis | Break down the assignment into modules |
+| Architecture | Suggest an architecture and explain the component interactions |
+| Database | Review table relationships and tenant isolation |
+| Backend | Help design APIs and middleware |
+| Frontend | Help plan reusable React components |
+| WebSockets | Explain tenant-specific rooms and events |
+| Concurrency | Suggest version-based conflict handling |
+| Testing | Generate test scenarios and edge cases |
+| Documentation | Review README and API documentation |
+| Debugging | Explain errors and suggest fixes |
+
+### Example prompts candidates can use
+
+Prompt 1 – Architecture planning
+
+"Act as a senior full-stack architect. Analyze this Real-Time Collaborative Kanban Board assignment. Explain the complete system architecture using React, Node.js, Express, PostgreSQL and Socket.IO. Explain the organization-to-tenant hierarchy, database relationships, security requirements and real-time communication flow. Do not generate code yet."
+
+Prompt 2 – Database design
+
+"Help me design a normalized PostgreSQL database for a multi-organization, multi-tenant Kanban application. Include organizations, tenants, users, memberships, boards, columns, tasks and activity_logs. Explain all primary keys, foreign keys, indexes and tenant isolation strategies."
+
+Prompt 3 – Backend development
+
+"Help me plan the Express.js backend module by module. Explain authentication, JWT middleware, RBAC, tenant authorization, CRUD APIs and task versioning. Explain how to test each API using Postman. Do not skip security considerations."
+
+Prompt 4 – Real-time functionality
+
+"Explain how to implement tenant-scoped Socket.IO rooms for a collaborative Kanban application. Show the sequence of events when one user moves a task and another user receives the update. Explain authentication, authorization, presence and network reconnection."
+
+Prompt 5 – Testing
+
+"Act as a QA engineer. Create comprehensive test cases for a multi-tenant real-time Kanban application, focusing on cross-tenant access, cross-organization isolation, simultaneous task updates, drag-and-drop conflicts, WebSocket isolation and network recovery."
+
+### Important AI usage rules
+
+1. Generate one module at a time.
+2. Understand the generated code before integrating it.
+3. Ask AI to explain unfamiliar functions.
+4. Test every module independently.
+5. Never share production passwords or API keys.
+6. Verify AI-generated database queries for tenant isolation.
+7. Do not assume generated code is secure.
+8. Ask AI to review the completed architecture.
+9. Maintain meaningful Git commits.
+10. Be prepared to explain every major design decision.
+
+# 20. Interview and project-defense preparation
+
+After completing the assignment, candidates should prepare to explain their implementation.
+
+Here are some of the most likely questions evaluators may ask.
+
+| Interview question | What the candidate should explain |
+| --- | --- |
+| What is multi-tenancy? | Multiple independent customers/workspaces sharing an application |
+| What is the difference between organization and tenant? | Organization is the parent; tenant is its branch/workspace |
+| How did you prevent cross-tenant data leakage? | Membership validation, tenant-scoped queries, authorization and WebSocket room restrictions |
+| Why did you use PostgreSQL? | Relational structure, foreign keys and transactions |
+| Why did you use Socket.IO? | Persistent real-time communication and event handling |
+| How does real-time synchronization work? | Database update followed by tenant-scoped event broadcast |
+| What happens if two users edit the same task? | Version checks and conflict resolution |
+| What is optimistic locking? | Detecting stale updates using version numbers |
+| What are optimistic UI updates? | Updating the UI before server confirmation |
+| How did you implement RBAC? | Role-based middleware and backend permission checks |
+| How did you handle network disconnection? | Reconnection, reauthentication and board-state resynchronization |
+| How did you design the task ordering system? | Position or rank-based ordering |
+| What is an activity log? | Historical record of user actions |
+| How would you scale this application? | Database indexing, caching, multiple application instances and distributed Socket.IO infrastructure |
+| Where did you use Python? | Explain the optional AI service, if implemented |
+| How did you use Agentic AI? | Tool selection, execution, verified context and result generation, if implemented |
+
+## Five scenarios candidates must be able to explain
+
+Scenario 1: Cross-tenant access
+
+A Hyderabad user tries to access a Bangalore task using its ID.
+
+Expected explanation: The backend checks the authenticated user's membership and tenant authorization. It rejects the unauthorized request, regardless of the tenant ID supplied by the frontend.
+
+Scenario 2: Simultaneous updates
+
+Two users edit the same task.
+
+Expected explanation: The backend uses version checking and rejects stale writes or invokes an explicit conflict-resolution strategy.
+
+Scenario 3: Real-time updates
+
+One user moves a task.
+
+Expected explanation: The backend validates the request, commits the database change and broadcasts the resulting update to authorized users in the same tenant.
+
+Scenario 4: Network disconnection
+
+A user disconnects while another user modifies the board.
+
+Expected explanation: On reconnection, the disconnected client reauthenticates, rejoins the authorized room and fetches the latest board state.
+
+Scenario 5: Multiple organizations
+
+A user has access to two organizations.
+
+Expected explanation: The application retrieves the user's authorized memberships and only displays data belonging to the currently selected authorized organization and tenant.
+
+# Final recommendations
+
+For this particular assignment, I would advise candidates to follow three development phases:
+
+Phase 1 – Build a working application
+
+- Authentication.
+- Organization and tenant management.
+- Database.
+- RBAC.
+- CRUD APIs.
+- React Kanban board.
+
+Phase 2 – Make it collaborative and secure
+
+- Tenant-scoped WebSockets.
+- Live task synchronization.
+- Presence indicators.
+- Activity logs.
+- Optimistic updates.
+- Concurrency handling.
+- Network recovery.
+
+Phase 3 – Make it submission-ready
+
+- ER diagram.
+- README.
+- API documentation.
+- WebSocket documentation.
+- Test report.
+- GitHub repository.
+- Screenshots and demo video.
+- Optional Python Agentic AI assistant.
+
+My most important advice: A fully functional application with proper tenant isolation, working real-time synchronization and correct concurrency handling is much stronger than a visually attractive Kanban board with incomplete backend logic.
+
+The candidate should be able to demonstrate the complete flow, explain the architecture, justify database decisions, and show what happens when two users perform conflicting operations.
+
+That is what will distinguish a strong Forward Deployed Engineer Intern submission from a basic CRUD project.
